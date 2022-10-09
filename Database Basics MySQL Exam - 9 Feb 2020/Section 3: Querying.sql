@@ -1,0 +1,41 @@
+SELECT first_name, middle_name, last_name, salary, hire_date
+FROM employees
+ORDER BY hire_date DESC;
+
+SELECT p.`name`, p.price, p.best_before, concat(left(p.`description`, 10), '...') AS short_description, pi.url
+FROM products AS p
+JOIN pictures AS pi
+ON p.picture_id = pi.id
+WHERE length(p.`description`) > 100 AND year(pi.added_on) < 2019 AND p.price > 20
+ORDER BY p.price DESC;
+
+
+SELECT s.`name`, count(ps.product_id) AS product_count,	round(avg(p.price), 2) AS `avg`
+FROM stores AS s
+LEFT JOIN products_stores AS ps
+ON s.id = ps.store_id
+LEFT JOIN products AS p
+ON ps.product_id = p.id
+GROUP BY s.id
+ORDER BY product_count DESC, `avg` DESC, s.id;
+
+
+SELECT concat_ws(' ', e.first_name, e.last_name) AS Full_name, 	s.`name`, a.`name`,	e.salary
+FROM employees AS e
+JOIN stores AS s
+ON s.id = e.store_id
+JOIN addresses AS a
+ON s.address_id = a.id
+WHERE e.salary < 4000 AND locate(5, a.`name`) > 0 AND length(s.`name`) > 8 AND right(e.last_name, 1) = 'n';
+
+
+SELECT reverse(s.`name`) AS reversed_name, concat_ws('-', upper(t.`name`), a.`name`) AS full_address,	count(e.id) AS employees_count
+FROM stores AS s
+JOIN employees AS e
+ON s.id = e.store_id
+JOIN addresses AS a
+ON s.address_id = a.id
+JOIN towns AS t
+ON a.town_id = t.id
+GROUP BY s.id
+ORDER BY full_address;
