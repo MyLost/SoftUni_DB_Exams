@@ -1,15 +1,12 @@
-INSERT INTO products_stores
-SELECT p.id, 1
-FROM products AS p
-LEFT JOIN products_stores AS ps 
-ON p.id = ps.product_id
-WHERE ps.store_id IS NULL;
+insert into coaches(first_name, last_name, salary, coach_level)
+select p.first_name, p.last_name, 2*p.salary, length(p.first_name) 
+from players as p
+where p.age >=45;
 
+update coaches as c 
+	join players_coaches as pc on c.id = pc.coach_id 
+SET 
+	c.coach_level  = c.coach_level +1
+where c.first_name like 'A%'; 
 
-UPDATE employees 
-SET manager_id = 3, salary = salary - 500
-WHERE year(hire_date) > 2003 AND store_id NOT IN (5, 14);
-
-DELETE 
-FROM employees
-WHERE salary >= 6000 AND manager_id IS NOT NULL;
+delete from players where age >= 45;
