@@ -1,41 +1,29 @@
-SELECT first_name, middle_name, last_name, salary, hire_date
-FROM employees
-ORDER BY hire_date DESC;
+select first_name, age, salary from players p order by p.salary DESC; 
 
-SELECT p.`name`, p.price, p.best_before, concat(left(p.`description`, 10), '...') AS short_description, pi.url
-FROM products AS p
-JOIN pictures AS pi
-ON p.picture_id = pi.id
-WHERE length(p.`description`) > 100 AND year(pi.added_on) < 2019 AND p.price > 20
-ORDER BY p.price DESC;
+select p.id, CONCAT_WS(' ', p.first_name, p.last_name) as full_name, p.age, p.`position` , p.hire_date  from players p join skills_data sd on sd.id = p.skills_data_id 
+where p.age < 23 and p.`position` = 'A' and p.hire_date is null and sd.strength > 50 order by p.salary ASC, age;
 
+select t.name, t.established, t.fan_base, count(p.id) as players_count 
+from teams t left join players p on p.team_id = t.id group by t.id order by players_count DESC, t.fan_base DESC;
 
-SELECT s.`name`, count(ps.product_id) AS product_count,	round(avg(p.price), 2) AS `avg`
-FROM stores AS s
-LEFT JOIN products_stores AS ps
-ON s.id = ps.store_id
-LEFT JOIN products AS p
-ON ps.product_id = p.id
-GROUP BY s.id
-ORDER BY product_count DESC, `avg` DESC, s.id;
+SELECT max(sd.speed) AS max_speed, t.`name`
+FROM players AS p
+	RIGHT JOIN skills_data AS sd
+    	ON p.skills_data_id = sd.id
+    	RIGHT JOIN teams AS te
+    	ON p.team_id = te.id
+    	RIGHT JOIN stadiums AS s
+    	ON te.stadium_id = s.id
+    	RIGHT JOIN towns AS t
+    	ON s.town_id = t.id
+WHERE te.`name` NOT LIKE 'Devify'
+GROUP BY t.`name`
+ORDER BY max_speed DESC, t.`name`;
 
-
-SELECT concat_ws(' ', e.first_name, e.last_name) AS Full_name, 	s.`name`, a.`name`,	e.salary
-FROM employees AS e
-JOIN stores AS s
-ON s.id = e.store_id
-JOIN addresses AS a
-ON s.address_id = a.id
-WHERE e.salary < 4000 AND locate(5, a.`name`) > 0 AND length(s.`name`) > 8 AND right(e.last_name, 1) = 'n';
-
-
-SELECT reverse(s.`name`) AS reversed_name, concat_ws('-', upper(t.`name`), a.`name`) AS full_address,	count(e.id) AS employees_count
-FROM stores AS s
-JOIN employees AS e
-ON s.id = e.store_id
-JOIN addresses AS a
-ON s.address_id = a.id
-JOIN towns AS t
-ON a.town_id = t.id
-GROUP BY s.id
-ORDER BY full_address;
+SELECT c.name, count(p.id) as total_count_of_players, sum(p.salary) as total_sum_of_salaries from players p 
+right join teams t on t.id = p.team_id 
+right join stadiums s on s.id = t.stadium_id 
+right join towns t2 on t2.id = s.town_id
+right join countries c on c.id = t2.country_id
+group by c.name
+order by total_count_of_players DESC, c.name;
